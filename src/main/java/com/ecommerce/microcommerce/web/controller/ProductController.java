@@ -2,6 +2,7 @@ package com.ecommerce.microcommerce.web.controller;
 
 import com.ecommerce.microcommerce.dao.ProductDao;
 import com.ecommerce.microcommerce.model.Product;
+import com.ecommerce.microcommerce.web.exceptions.ProduitGratuitException;
 import com.ecommerce.microcommerce.web.exceptions.ProduitIntrouvableException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
@@ -69,9 +70,10 @@ public class ProductController {
 
     //ajouter un produit
     @PostMapping(value = "/Produits")
-
     public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
-
+        
+        if (product.getPrix()==0) throw new ProduitGratuitException("Le produit de l'ID "+product.getId()+ " ne doit pas etre gratuit!! veuillez definir un montant supérieure à 0");
+        
         Product productAdded =  productDao.save(product);
 
         if (productAdded == null)
@@ -88,13 +90,13 @@ public class ProductController {
 
     @DeleteMapping (value = "/Produits/{id}")
     public void supprimerProduit(@PathVariable int id) {
-
         productDao.delete(id);
     }
 
     @PutMapping (value = "/Produits")
     public void updateProduit(@RequestBody Product product) {
-
+        if (product.getPrix()==0) throw new ProduitGratuitException("Le produit de l'ID "+product.getId()+ " ne doit pas etre gratuit!! veuillez definir un montant supérieure à 0");
+        
         productDao.save(product);
     }
 
@@ -102,7 +104,6 @@ public class ProductController {
     //Pour les tests
     @GetMapping(value = "test/produits/{prix}")
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
-
         return productDao.chercherUnProduitCher(400);
     }
 
