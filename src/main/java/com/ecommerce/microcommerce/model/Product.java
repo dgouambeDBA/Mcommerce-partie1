@@ -62,7 +62,7 @@ public class Product {
         this.prix = prix;
     }
 
-    @JsonIgnore
+   
     public int getPrixAchat() {
         return prixAchat;
     }
